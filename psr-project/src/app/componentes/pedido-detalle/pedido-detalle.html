@@ -1,0 +1,49 @@
+<h2 *ngIf="mesaId">Detalle del Pedido para Mesa N° {{ mesaId }}</h2>
+<h2 *ngIf="!mesaId">Error: No se especificó la mesa</h2>
+
+<div *ngIf="errorCargaProductos" class="error-mensaje">
+  <strong>Error:</strong> {{ errorCargaProductos }}
+</div>
+
+<div *ngIf="mensajeAccion" class="mensaje-feedback">
+  {{ mensajeAccion }}
+</div>
+
+<div *ngIf="!errorCargaProductos">
+  <h3>Menú Disponible</h3>
+  <div *ngIf="productos.length === 0">Cargando menú...</div>
+
+  <ul *ngIf="productos.length > 0" class="lista-productos">
+    <li *ngFor="let prod of productos">
+      {{ prod.nombre }} ({{ prod.tipo }}) - ${{ prod.precio }}
+      <button (click)="agregarAlPedido(prod)">Agregar (+)</button>
+    </li>
+  </ul>
+</div>
+
+<hr>
+
+<div>
+  <h3>Pedido Actual</h3>
+  
+  <p *ngIf="pedidoActual && pedidoActual.items.length === 0">Aún no has agregado productos.</p>
+
+  <ul *ngIf="pedidoActual && pedidoActual.items.length > 0">
+    <li *ngFor="let item of pedidoActual.items">
+      {{ item.nombre }} - Cantidad: {{ item.cantidad }} - Subtotal: ${{ item.cantidad * item.precioUnitario }}
+      <button (click)="quitarDelPedido(item.productoId)">Quitar (-)</button>
+    </li>
+  </ul>
+  
+  <p *ngIf="pedidoActual && pedidoActual.items.length > 0">
+    <strong>Subtotal Pedido: ${{ calcularSubtotal() }}</strong>
+  </p>
+
+  <button 
+    (click)="enviarPedido()" 
+    [disabled]="!pedidoActual || pedidoActual.items.length === 0">
+    Confirmar Pedido
+  </button>
+</div>
+
+<a routerLink="/mesas">Volver a Mesas</a>

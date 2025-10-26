@@ -1,0 +1,49 @@
+.lista-mesas {
+  list-style: none;
+  padding: 0;
+}
+
+.lista-mesas li {
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 5px;
+}
+
+/* Clases opcionales para estados */
+.estado-libre {
+  border-left: 5px solid green;
+}
+.estado-reservada {
+  border-left: 5px solid orange;
+}
+.estado-cerrada {
+  border-left: 5px solid red;
+}
+
+.lista-mesas li span {
+  font-weight: bold;
+}
+
+.acciones-mesa button {
+  margin-left: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.acciones-mesa button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.error-mensaje {
+  color: red;
+  border: 1px solid red;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  background-color: #ffe0e0;
+}

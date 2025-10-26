@@ -1,0 +1,33 @@
+<h2>Menú de Productos</h2>
+
+<div *ngIf="error" class="error-mensaje">
+  <strong>Error:</strong> {{ error }}
+</div>
+
+<div style="margin-bottom: 15px;">
+  <a routerLink="/productos/agregar" class="boton-agregar">Agregar Nuevo Producto</a>
+</div>
+<div *ngIf="!error && productos.length === 0">
+   <p>Cargando menú o no hay productos disponibles.</p>
+</div>
+
+<table *ngIf="!error && productos.length > 0" class="tabla-productos">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Tipo</th>
+      <th>Precio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let prod of productos">
+      <td>{{ prod.nombre }}</td>
+      <td>{{ prod.descripcion }}</td>
+      <td>{{ prod.tipo }}</td>
+      <td>${{ prod.precio }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<button (click)="cargarProductos()">Recargar Menú</button>

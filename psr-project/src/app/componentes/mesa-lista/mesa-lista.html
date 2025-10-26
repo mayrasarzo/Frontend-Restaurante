@@ -1,0 +1,54 @@
+<h2>Estado de las Mesas</h2>
+
+<div *ngIf="error" class="error-mensaje">
+  <strong>Error:</strong> {{ error }}
+</div>
+
+<div *ngIf="mensajeAccion" class="mensaje-feedback">
+  {{ mensajeAccion }}
+</div>
+
+<div class="agregar-mesa-form">
+  <label for="numeroMesa">Nueva Mesa N°:</label>
+  <input
+    type="number"
+    id="numeroMesa"
+    [(ngModel)]="nuevoNumeroMesa"
+    placeholder="Ej: 10"
+    min="1">
+  <button (click)="agregarNuevaMesa()" [disabled]="!nuevoNumeroMesa">
+    Agregar Mesa
+  </button>
+</div>
+<hr> <div *ngIf="!error && mesas.length === 0">
+  <p>No hay mesas disponibles.</p>
+</div>
+
+<ul *ngIf="!error && mesas.length > 0" class="lista-mesas">
+  <li *ngFor="let mesa of mesas" [ngClass]="{
+      'estado-libre': mesa.estado === 'libre',
+      'estado-reservada': mesa.estado === 'reservada',
+      'estado-cerrada': mesa.estado === 'cerrada'
+    }">
+    <span>Mesa N° {{ mesa.numero }} - Estado: <strong>{{ mesa.estado }}</strong></span>
+
+    <div class="acciones-mesa">
+      <button (click)="verPedido(mesa.id)">Ver/Crear Pedido</button>
+
+      <button
+        *ngIf="mesa.estado === 'libre'"
+        (click)="reservarMesa(mesa.id)">
+        Reservar
+      </button>
+
+      <button
+        *ngIf="mesa.estado === 'reservada'"
+        (click)="cerrarVenta(mesa.id)">
+        Cerrar Venta
+      </button>
+
+       </div>
+  </li>
+</ul>
+
+<button (click)="cargarMesas()">Recargar Mesas</button>

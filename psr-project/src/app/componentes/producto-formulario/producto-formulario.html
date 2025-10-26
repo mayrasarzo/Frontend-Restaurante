@@ -1,0 +1,35 @@
+<h2>Agregar Nuevo Producto</h2>
+
+<div *ngIf="mensajeAccion" class="mensaje-feedback">
+  {{ mensajeAccion }}
+</div>
+
+<div class="agregar-producto-form">
+  <div>
+    <label for="prodNombre">Nombre:</label>
+    <input type="text" id="prodNombre" [(ngModel)]="nuevoProducto.nombre" required>
+  </div>
+  <div>
+    <label for="prodDesc">Descripción:</label>
+    <textarea id="prodDesc" [(ngModel)]="nuevoProducto.descripcion"></textarea>
+  </div>
+  <div>
+    <label for="prodPrecio">Precio:</label>
+    <input type="number" id="prodPrecio" [(ngModel)]="nuevoProducto.precio" required min="1">
+  </div>
+  <div>
+    <label for="prodTipo">Tipo:</label>
+    <select id="prodTipo" [(ngModel)]="nuevoProducto.tipo" required>
+      <option value="" disabled selected>Seleccione un tipo</option>
+      <option *ngFor="let tipo of tiposProducto" [value]="tipo">
+        {{ tipo | titlecase }}
+      </option>
+    </select>
+  </div>
+  <div class="form-actions">
+      <button (click)="agregarNuevoProducto()"
+              [disabled]="!nuevoProducto.nombre || !nuevoProducto.precio || nuevoProducto.precio <= 0 || !nuevoProducto.tipo">
+        Guardar Producto
+      </button>
+      <button type="button" (click)="cancelar()">Cancelar</button> </div>
+</div>
