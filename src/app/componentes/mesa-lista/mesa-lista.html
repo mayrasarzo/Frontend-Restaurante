@@ -1,0 +1,94 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Estado de las Mesas</h2>
+  <button (click)="cargarMesas()" class="btn btn-sm btn-outline-secondary">
+    Recargar
+  </button>
+</div>
+
+<div *ngIf="mensajeInfo" class="alert alert-info">
+  {{ mensajeInfo }}
+</div>
+
+<div *ngIf="mensajeError" class="alert alert-danger">
+  <strong>Error:</strong> {{ mensajeError }}
+</div>
+
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Agregar Nueva Mesa</h5>
+    <div class="input-group">
+      <span class="input-group-text">N°</span>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="nuevoNumeroMesa"
+        placeholder="Ej: 10"
+        min="1"
+      />
+      <button
+        class="btn btn-primary"
+        (click)="agregarNuevaMesa()"
+        [disabled]="!nuevoNumeroMesa"
+      >
+        Agregar Mesa
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!mensajeError && mesas.length === 0" class="text-center text-muted">
+  <p>No hay mesas disponibles.</p>
+</div>
+
+<div
+  *ngIf="!mensajeError && mesas.length > 0"
+  class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4"
+>
+  <div *ngFor="let mesa of mesas" class="col">
+    <div class="card h-100 shadow-sm">
+      <div
+        class="card-header text-white"
+        [ngClass]="{
+          'bg-success': mesa.estado === EstadoMesa.LIBRE,
+          'bg-warning': mesa.estado === EstadoMesa.RESERVADA,
+          'bg-danger': mesa.estado === EstadoMesa.CERRADA
+        }"
+      >
+        <h5 class="card-title mb-0">Mesa N° {{ mesa.numero }}</h5>
+      </div>
+
+      <div class="card-body">
+        <p class="card-text">
+          Estado: <strong>{{ mesa.estado }}</strong>
+        </p>
+      </div>
+
+      <div class="card-footer bg-transparent border-top-0 d-grid gap-2">
+        <button
+          class="btn btn-primary"
+          (click)="verPedido(mesa.id)"
+          [disabled]="mesa.estado === EstadoMesa.CERRADA"
+        >
+          Ver/Crear Pedido
+        </button>
+
+        <button
+          *ngIf="mesa.estado === EstadoMesa.LIBRE"
+          class="btn btn-success"
+          (click)="reservarMesa(mesa.id)"
+        >
+          Reservar
+        </button>
+
+        <button
+          *ngIf="mesa.estado === EstadoMesa.RESERVADA"
+          class="btn btn-danger"
+          (click)="cerrarVenta(mesa.id)"
+        >
+          Cerrar Venta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

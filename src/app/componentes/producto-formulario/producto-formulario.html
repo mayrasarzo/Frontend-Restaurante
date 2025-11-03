@@ -1,0 +1,75 @@
+<h2 class="mb-3">Agregar Nuevo Producto</h2>
+
+<div *ngIf="mensajeAccion" class="alert alert-info">
+  {{ mensajeAccion }}
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="mb-3">
+      <label for="prodNombre" class="form-label">Nombre:</label>
+      <input
+        type="text"
+        class="form-control"
+        id="prodNombre"
+        [(ngModel)]="nuevoProducto.nombre"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="prodDesc" class="form-label">Descripción:</label>
+      <textarea
+        class="form-control"
+        id="prodDesc"
+        rows="3"
+        [(ngModel)]="nuevoProducto.descripcion"
+      ></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="prodPrecio" class="form-label">Precio:</label>
+      <input
+        type="number"
+        class="form-control"
+        id="prodPrecio"
+        [(ngModel)]="nuevoProducto.precio"
+        required
+        min="1"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="prodTipo" class="form-label">Tipo:</label>
+      <select
+        class="form-select"
+        id="prodTipo"
+        [(ngModel)]="nuevoProducto.tipo"
+        required
+      >
+        <option [ngValue]="null" disabled selected>Seleccione un tipo</option>
+        <option *ngFor="let tipo of tiposProducto" [value]="tipo">
+          {{ tipo | titlecase }}
+        </option>
+      </select>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" (click)="cancelar()" class="btn btn-secondary">
+        Cancelar
+      </button>
+      <button
+        (click)="agregarNuevoProducto()"
+        class="btn btn-primary"
+        [disabled]="
+          !nuevoProducto.nombre ||
+          !nuevoProducto.precio ||
+          nuevoProducto.precio <= 0 ||
+          !nuevoProducto.tipo
+        "
+      >
+        Guardar Producto
+      </button>
+    </div>
+    
+  </div> </div>

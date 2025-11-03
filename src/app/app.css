@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+:host > div.container {
+  flex: 1;
+}
+
+/* Pequeño ajuste para que el link "activo" en la navbar
+  se vea más resaltado (Bootstrap lo hace un poco sutil).
+*/
+.nav-link.active {
+  font-weight: bold;
+  border-bottom: 2px solid white;
+}

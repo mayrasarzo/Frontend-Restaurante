@@ -1,0 +1,42 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Menú de Productos</h2>
+  <a routerLink="/productos/agregar" class="btn btn-primary">
+    Agregar Nuevo Producto
+  </a>
+</div>
+
+<div *ngIf="error" class="alert alert-danger">
+  <strong>Error:</strong> {{ error }}
+</div>
+<div
+  *ngIf="!error && productos.length === 0"
+  class="alert alert-info text-center"
+>
+  <p class="mb-0">Cargando menú o no hay productos disponibles.</p>
+</div>
+
+<table
+  *ngIf="!error && productos.length > 0"
+  class="table table-striped table-hover table-bordered align-middle"
+>
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Nombre</th>
+      <th scope="col">Descripción</th>
+      <th scope="col">Tipo</th>
+      <th scope="col">Precio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let prod of productos">
+      <td>{{ prod.nombre }}</td>
+      <td>{{ prod.descripcion }}</td>
+      <td>{{ prod.tipo | titlecase }}</td>
+      <td>${{ prod.precio }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<button (click)="cargarProductos()" class="btn btn-outline-secondary">
+  Recargar Menú
+</button>

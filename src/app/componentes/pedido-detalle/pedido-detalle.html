@@ -1,0 +1,205 @@
+<h2 *ngIf="mesaNumero" class="mb-3">Detalle del Pedido para Mesa N° {{ mesaNumero }}</h2>
+
+<h2 *ngIf="!mesaNumero && !errorCargaProductos" class="mb-3">Cargando datos de la mesa...</h2>
+<h2 *ngIf="!mesaNumero && errorCargaProductos" class="mb-3">{{ errorCargaProductos }}</h2>
+
+<div *ngIf="errorCargaProductos" class="alert alert-danger">
+  <strong>Error:</strong> {{ errorCargaProductos }}
+</div>
+<div *ngIf="mensajeAccion" class="alert alert-info">
+  {{ mensajeAccion }}
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Armar Menú (Atajo)</h5>
+        <div class="d-grid gap-2 d-md-flex">
+          <button
+            class="btn btn-primary"
+            (click)="abrirModalMenu('EJECUTIVO')"
+          >
+            Ejecutivo (${{ PRECIOS_FIJOS.EJECUTIVO }})
+          </button>
+          <button
+            class="btn btn-info"
+            (click)="abrirModalMenu('ESTUDIANTIL')"
+          >
+            Estudiantil (${{ PRECIOS_FIJOS.ESTUDIANTIL }})
+          </button>
+          <button
+            class="btn btn-warning"
+            (click)="abrirModalMenu('DEL_DIA')"
+          >
+            Del Día (${{ PRECIOS_FIJOS.DEL_DIA }})
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Menú Individual</h5>
+        
+        <div *ngIf="!errorCargaProductos && productos.length === 0" class="text-center text-muted">
+          Cargando menú...
+        </div>
+
+        <ul *ngIf="productos.length > 0" class="list-group list-group-flush">
+          <li
+            *ngFor="let prod of productos"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <div>
+              <span class="fw-bold">{{ prod.nombre }}</span>
+              <small class="text-muted d-block">
+                {{ prod.tipo | titlecase }} - ${{ prod.precio }}
+              </small>
+            </div>
+            <button class="btn btn-success btn-sm" (click)="agregarAlPedido(prod)">
+              Agregar (+)
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div> <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Pedido Actual</h5>
+
+        <p *ngIf="pedidoActual && pedidoActual.items.length === 0" class="text-muted">
+          Aún no has agregado productos.
+        </p>
+        
+        <ul
+          *ngIf="pedidoActual && pedidoActual.items.length > 0"
+          class="list-group list-group-flush"
+        >
+          <li
+            *ngFor="let item of pedidoActual.items"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <div>
+              <span *ngIf="item.tipo === TipoProducto.PROMO" class="fw-bold text-success">
+                {{ item.nombre }} (Descuento):
+                <span class="text-dark">${{ item.precioUnitario }}</span>
+              </span>
+              <span *ngIf="item.tipo !== TipoProducto.PROMO">
+                <span class="fw-bold">{{ item.nombre }}</span>
+                <small class="text-muted d-block">
+                  Cant: {{ item.cantidad }} - Subtotal: ${{ item.cantidad * item.precioUnitario }}
+                </small>
+              </span>
+            </div>
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="quitarDelPedido(item.productoId, item.nombre)"
+            >
+              Quitar (-)
+            </button>
+          </li>
+        </ul>
+
+        <div *ngIf="pedidoActual && pedidoActual.items.length > 0" class="mt-3">
+          <h4 class="text-end">
+            Total Pedido: ${{ calcularSubtotal() }}
+          </h4>
+          <div class="d-grid mt-3">
+            <button
+              class="btn btn-primary btn-lg"
+              (click)="enviarPedido()"
+            >
+              Confirmar Pedido
+            </button>
+          </div>
+        </div>
+        
+      </div> </div>
+    
+    <div class="mt-3">
+      <a routerLink="/mesas" class="btn btn-outline-secondary">
+        &larr; Volver a Mesas
+      </a>
+    </div>
+  </div> </div> <div
+  class="modal fade"
+  #menuModalElement
+  id="menuModalElement"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" *ngIf="tipoMenuSeleccionado === 'EJECUTIVO'">
+          Armar Menú Ejecutivo (${{ PRECIOS_FIJOS.EJECUTIVO }})
+        </h5>
+        <h5 class="modal-title" *ngIf="tipoMenuSeleccionado === 'ESTUDIANTIL'">
+          Armar Menú Estudiantil (${{ PRECIOS_FIJOS.ESTUDIANTIL }})
+        </h5>
+        <h5 class="modal-title" *ngIf="tipoMenuSeleccionado === 'DEL_DIA'">
+          Armar Menú del Día (${{ PRECIOS_FIJOS.DEL_DIA }})
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="cerrarModalMenu()"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        
+        <div class="mb-3">
+          <label for="selectPlato" class="form-label">Plato:</label>
+          <select class="form-select" id="selectPlato" [(ngModel)]="platoSeleccionadoId">
+            <option [ngValue]="null" disabled selected>-- Platos --</option>
+            <option *ngFor="let p of listaPlatos" [ngValue]="p.id">
+              {{ p.nombre }} (${{ p.precio }})
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3" *ngIf="tipoMenuSeleccionado === 'EJECUTIVO' || tipoMenuSeleccionado === 'ESTUDIANTIL'">
+          <label for="selectBebida" class="form-label">Bebida:</label>
+          <select class="form-select" id="selectBebida" [(ngModel)]="bebidaSeleccionadaId">
+            <option [ngValue]="null" disabled selected>-- Bebidas --</option>
+            <option *ngFor="let b of listaBebidas" [ngValue]="b.id">
+              {{ b.nombre }} (${{ b.precio }})
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-3" *ngIf="tipoMenuSeleccionado === 'EJECUTIVO' || tipoMenuSeleccionado === 'DEL_DIA'">
+          <label for="selectPostre" class="form-label">Postre:</label>
+          <select class="form-select" id="selectPostre" [(ngModel)]="postreSeleccionadoId">
+            <option [ngValue]="null" disabled selected>-- Postres --</option>
+            <option *ngFor="let p of listaPostres" [ngValue]="p.id">
+              {{ p.nombre }} (${{ p.precio }})
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cerrarModalMenu()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="confirmarMenu()"
+        >
+          Confirmar Menú
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
